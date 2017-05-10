@@ -89,7 +89,7 @@ describe('Elevator', function() {
     assert.deepEqual(elevator.getStops(), [3, 4, 8, 9]);
   })
 
-  it('should drop off everyone in the up array, then drop of the down array', () =>{
+  it('should drop off everyone in the up array, que everyone in down array, then drop of the down array', () =>{
     const mockUserUp1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUserUp2 = { name: "Tim", currentFloor: 5, dropOffFloor: 10 };
     const mockUserUp3 = { name: "Tim", currentFloor: 6, dropOffFloor: 13 };

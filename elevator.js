@@ -10,6 +10,7 @@ export default class Elevator {
     }
     this.lastStop = 0
     this.floorsTraversed = 0
+    this.stops = [0]
   }
 
   reset(){
@@ -23,6 +24,7 @@ export default class Elevator {
     }
     this.lastStop = 0
     this.floorsTraversed = 0
+    this.stops = [0]
   }
 
   /**********************/
@@ -37,7 +39,16 @@ export default class Elevator {
           this.queRider(user)
         } else if (this.direction === "up" && user.currentFloor > user.dropOffFloor){
           // accounts for scenario where user is going down,
-              // elevator is going up, 
+              // elevator is going up,
+          this.queRider(user)
+        } else if(this.direction === "down" && user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
+          // accounts for scenario where user is going down,
+              // elevator is going down,
+              // but elevator has passed them
+          this.queRider(user)
+        } else if(this.direction === "down" && user.currentFloor < user.dropOffFloor){
+          // accounts for scenario where user is going up,
+              // elevator is going down,
           this.queRider(user)
         } else {
           this.addRider(user)
@@ -87,7 +98,6 @@ export default class Elevator {
     this.currentFloor = this.currentRiders[0].dropOffFloor
     this.currentRiders.shift()
     this.setDirection()
-
   }
 
   getFloors(){
@@ -130,33 +140,6 @@ export default class Elevator {
   }
 
 }
-
-
-// riderRequest(user){
-//
-// if (this.direction === "up" && this.currentFloor > user.currentFloor || this.direction === "down" && this.currentFloor < user.currentFloor){
-//     this.queRider(user)
-//   } else if(this.direction === "down")
-//   this.addRider(user)
-// }
-//
-// queRider(user) {
-//   user.currentFloor < user.dropOffFloor
-//     ? this.queRiders.up.push(user)
-//     : this.queRiders.down.push(user)
-// }
-//
-// addRider(user){
-//   user.currentFloor < user.dropOffFloor
-//     ? this.currentRiders.up.push(user)
-//     : this.currentRiders.down.push(user)
-//
-//   this.setDirection()
-//
-//   this.currentFloor = user.currentFloor
-//   this.sortRiders()
-//   this.getLastStop()
-// }
 
 
 class Person {
