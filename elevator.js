@@ -7,7 +7,7 @@ export default class Elevator {
       up:[],
       down:[]
     }
-    this.request = {
+    this.queRiders = {
       up:[],
       down:[]
     }
@@ -23,11 +23,34 @@ export default class Elevator {
       up:[],
       down:[]
     }
+    this.queRiders = {
+      up:[],
+      down:[]
+    }
     this.lastStop = 0
     this.floorsTraversed = 0
   }
 
   /**********************/
+
+  riderRequest(user){
+    if (this.direction === "up" && this.currentFloor > user.currentFloor){
+      // console.log("inside up qued request");
+      this.queRider(user)
+    } else if (this.direction === "down" && this.currentFloor < user.currentFloor){
+      // console.log("inside down qued");
+      this.queRider(user)
+    } else {
+      // console.log("inside addRider");
+      this.addRider(user)
+    }
+  }
+
+  queRider(user) {
+    user.currentFloor < user.dropOffFloor
+      ? this.queRiders.up.push(user)
+      : this.queRiders.down.push(user)
+  }
 
   addRider(user){
     user.currentFloor < user.dropOffFloor

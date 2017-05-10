@@ -18,7 +18,7 @@ describe('Elevator', function() {
   it('should bring a rider to a floor above their current floor', () => {
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
 
-    elevator.addRider(mockUser1);
+    elevator.riderRequest(mockUser1);
 
     assert.deepEqual(elevator.currentRiders.up.length, 1)
 
@@ -30,13 +30,13 @@ describe('Elevator', function() {
   });
 
   it('should sort the up and down arrays by dropOffFloor from least to greatest', () => {
+    const mockUser3 = { name: "Bill", currentFloor: 2, dropOffFloor: 4 };
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUser2 = { name: "Tim", currentFloor: 4, dropOffFloor: 9 };
-    const mockUser3 = { name: "Bill", currentFloor: 2, dropOffFloor: 4 };
 
-    elevator.addRider(mockUser1);
-    elevator.addRider(mockUser2);
-    elevator.addRider(mockUser3);
+    elevator.riderRequest(mockUser3);
+    elevator.riderRequest(mockUser1);
+    elevator.riderRequest(mockUser2);
 
     const result = [ { name: 'Bill', currentFloor: 2, dropOffFloor: 4 },
                      { name: 'Brittany', currentFloor: 3, dropOffFloor: 8 },
@@ -46,13 +46,13 @@ describe('Elevator', function() {
   })
 
   it('should shift out the first person from the up array once they have been dropped off', () => {
+    const mockUser3 = { name: "Bill", currentFloor: 2, dropOffFloor: 4 };
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUser2 = { name: "Tim", currentFloor: 4, dropOffFloor: 9 };
-    const mockUser3 = { name: "Bill", currentFloor: 2, dropOffFloor: 4 };
 
-    elevator.addRider(mockUser1);
-    elevator.addRider(mockUser2);
-    elevator.addRider(mockUser3);
+    elevator.riderRequest(mockUser3);
+    elevator.riderRequest(mockUser1);
+    elevator.riderRequest(mockUser2);
 
     const before = [ { name: 'Bill', currentFloor: 2, dropOffFloor: 4 },
                      { name: 'Brittany', currentFloor: 3, dropOffFloor: 8 },
@@ -70,7 +70,7 @@ describe('Elevator', function() {
 
   it('should bring a rider to a floor below their current floor', () => {
     const mockUser = { name: "Brittany", currentFloor: 8, dropOffFloor: 3 };
-    elevator.addRider(mockUser);
+    elevator.riderRequest(mockUser);
 
     assert.deepEqual(elevator.currentRiders.down.length, 1)
     assert.deepEqual(elevator.currentFloor, 8)
@@ -85,8 +85,8 @@ describe('Elevator', function() {
   it('should keep track of all the stops in one direction', () =>{
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUser2 = { name: "Tim", currentFloor: 4, dropOffFloor: 9 };
-    elevator.addRider(mockUser1);
-    elevator.addRider(mockUser2);
+    elevator.riderRequest(mockUser1);
+    elevator.riderRequest(mockUser2);
     assert.deepEqual(elevator.getStops(), [3, 4, 8, 9]);
   })
 
@@ -99,14 +99,16 @@ describe('Elevator', function() {
     const mockUserDown2 = { name: "Tim", currentFloor: 10, dropOffFloor: 5 };
     const mockUserDown3 = { name: "Tim", currentFloor: 4, dropOffFloor: 2 };
 
-    elevator.addRider(mockUserUp1);
-    elevator.addRider(mockUserUp2);
-    elevator.addRider(mockUserUp3);
+    elevator.riderRequest(mockUserUp1);
+    elevator.riderRequest(mockUserUp2);
+    elevator.riderRequest(mockUserUp3);
 
-    elevator.addRider(mockUserDown1);
-    elevator.addRider(mockUserDown2);
-    elevator.addRider(mockUserDown3);
+    elevator.riderRequest(mockUserDown1);
+    elevator.riderRequest(mockUserDown2);
+    elevator.riderRequest(mockUserDown3);
 
+    eval(locus)
+    
     assert.deepEqual(elevator.direction, "up");
 
     elevator.goToFloor()
@@ -125,15 +127,13 @@ describe('Elevator', function() {
     assert.deepEqual(elevator.currentRiders.down.length, 0);
   })
 
-
-
   it.skip('should be able to keep track of how many total floors', () => {
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUser2 = { name: "Tim", currentFloor: 5, dropOffFloor: 10 };
     const mockUser3 = { name: "Tim", currentFloor: 5, dropOffFloor: 13 };
-    elevator.addRider(mockUser1);
-    elevator.addRider(mockUser2);
-    elevator.addRider(mockUser3);
+    elevator.riderRequest(mockUser1);
+    elevator.riderRequest(mockUser2);
+    elevator.riderRequest(mockUser3);
     assert.deepEqual(elevator.getStops(), [3, 5, 8, 10, 13]);
 
     // eval(locus)
@@ -146,13 +146,15 @@ describe('Elevator', function() {
 
   })
 
-  it.skip('should store a collection of requests and a collection of current riders on the elevator.', () => {
+  it('should store a collection of requests and a collection of current riders on the elevator.', () => {
     const mockUser1 = { name: "Brittany", currentFloor: 8, dropOffFloor: 3 };
     const mockUser2 = { name: "Tim", currentFloor: 10, dropOffFloor: 5 };
-    elevator.goToFloor(mockUser1);
-    elevator.goToFloor(mockUser2);
-
-    assert.deepEqual(elevator.currentRiders.length, 2)
+    elevator.riderRequest(mockUser1);
+    // eval(locus)
+    elevator.riderRequest(mockUser2);
+    // eval(locus)
+    assert.deepEqual(elevator.currentRiders.down.length, 1)
+    assert.deepEqual(elevator.queRiders.down.length, 1)
   })
 
   it.skip('should', () => {
