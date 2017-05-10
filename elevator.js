@@ -3,45 +3,52 @@ export default class Elevator {
     this.direction = "up" || this.setDirection()
     this.motionStatus = "idle"
     this.currentFloor = 0
-    this.currentRiders= {
-      up:[],
-      down:[]
-    }
+    this.currentRiders= [].sort((a, b) => a.dropOffFloor - b.dropOffFloor)
     this.queRiders = {
       up:[],
       down:[]
     }
     this.lastStop = 0
     this.floorsTraversed = 0
+    this.stops = [0]
   }
 
   reset(){
     this.direction = "up"
     this.motionStatus = 'idle'
     this.currentFloor = 0
-    this.currentRiders= {
-      up:[],
-      down:[]
-    }
+    this.currentRiders= [].sort((a, b) => a.dropOffFloor - b.dropOffFloor)
     this.queRiders = {
       up:[],
       down:[]
     }
     this.lastStop = 0
     this.floorsTraversed = 0
+    this.stops = [0]
   }
 
   /**********************/
 
   riderRequest(user){
-    if (this.direction === "up" && this.currentFloor > user.currentFloor){
-      // console.log("inside up qued request");
-      this.queRider(user)
-    } else if (this.direction === "down" && this.currentFloor < user.currentFloor){
-      // console.log("inside down qued");
-      this.queRider(user)
+    const userGoingUp = user.currentFloor < user.dropOffFloor
+    const userGoingDown = user.currentFloor > user.dropOffFloor
+    const elevatorGoingUp = this.direction === "up"
+    const elevatorGoingDown = this.direction === "down"
+    if (this.currentRiders.length) {
+
+        if (elevatorGoingUp && userGoingUp && this.currentFloor > user.currentFloor){
+          this.queRider(user)
+        } else if (elevatorGoingUp && userGoingDown){
+          this.queRider(user)
+        } else if(elevatorGoingDown && userGoingDown && this.currentFloor < user.currentFloor){
+          this.queRider(user)
+        } else if(elevatorGoingDown && userGoingUp){
+          this.queRider(user)
+        } else {
+          this.addRider(user)
+        }
+
     } else {
-      // console.log("inside addRider");
       this.addRider(user)
     }
   }
@@ -53,118 +60,69 @@ export default class Elevator {
   }
 
   addRider(user){
-    user.currentFloor < user.dropOffFloor
-      ? this.currentRiders.up.push(user)
-      : this.currentRiders.down.push(user)
-
+    this.currentRiders.push(user)
     this.setDirection()
-
     this.currentFloor = user.currentFloor
-    this.sortRiders()
     this.getLastStop()
-  }
-
-  sortRiders(){
-    const direction = this.direction
-    this.currentRiders.up.sort((a, b) =>{
-      return a.dropOffFloor - b.dropOffFloor
-    })
-    this.currentRiders.down.sort((a, b) =>{
-      return b.dropOffFloor - a.dropOffFloor
-    })
+    this.getAllStops(user.currentFloor)
   }
 
   setDirection(){
-    if (this.currentFloor === this.lastStop) {
-      if (!this.currentRiders.up.length && this.currentRiders.down.length) {
+    if (this.currentFloor === this.lastStop){
+      if(this.direction === "up" && this.queRiders.down.length) {
         this.direction = "down"
-      }
-      if (!this.currentRiders.down.length && this.currentRiders.up.length) {
+        this.mapQued()
+        }
+      if (this.currentFloor === this.lastStop && this.direction === "down" && this.queRiders.up.length) {
         this.direction = "up"
+        this.mapQued()
       }
     }
+  }
+
+  mapQued(){
+    this.queRiders[this.direction].map(user => this.addRider(user))
+    this.queRiders[this.direction] = []
   }
 
   /**********************/
 
   goToFloor(){
-    const direction = this.direction
-    // this.getFloors()
-    this.currentFloor = this.currentRiders[direction][0].dropOffFloor
-    this.currentRiders[direction].shift()
-
+    this.getAllStops(this.currentRiders[0].dropOffFloor)
+    console.log("dropOff: ",  this.currentRiders[0].dropOffFloor);
+    this.currentFloor = this.currentRiders[0].dropOffFloor
+    this.currentRiders.shift()
+    this.setDirection()
   }
 
   getFloors(){
-    // this.floorsTraversed = this.currentFloor
-    const stops = this.getStops()
-    const max = Math.max(...stops)
-    const min = Math.min(...stops)
-
-    // console.log("stops", stops);
-    console.log("max - min: ", max - min);
-
-    this.floorsTraversed = Math.abs(min - max)
-    console.log("floorsTraversed: ", this.floorsTraversed);
-
-    // return max - min + this.currentFloor;
+    this.floorsTraversed = this.stops.reduce((sum, stop) => {
+      sum += Math.abs(sum - stop)
+      return sum
+    },0)
   }
 
   /**********************/
 
   getLastStop(){
     this.direction === "up"
-      ? this.lastStop = Math.max(...this.getStops())
-      : this.lastStop = Math.min(...this.getStops())
+      ? this.lastStop = Math.max(...this.getStopsOneDirection())
+      : this.lastStop = Math.min(...this.getStopsOneDirection())
   }
 
-  getStops(){
-    const { up, down } = this.currentRiders
-    return this.direction === "up"
-      ? this.getStopsReducer(up).sort((a, b) => {
-        return a-b
-      })
-      : this.getStopsReducer(down).sort((a, b) => {
-        return a-b
-      })
-  }
-
-  getStopsReducer(obj){
-    return obj.reduce((stopsArray, user) => {
+  getStopsOneDirection(){
+    return this.currentRiders.reduce((stopsArray, user) => {
       !stopsArray.includes(user.currentFloor) && stopsArray.push(user.currentFloor)
       !stopsArray.includes(user.dropOffFloor) && stopsArray.push(user.dropOffFloor)
       return stopsArray
-    },[])
+    },[]).sort((a, b) => a - b)
   }
 
+  getAllStops(stop){
+    this.stops.push(stop)
+    this.getFloors()
+  }
 }
-
-
-// riderRequest(user){
-//
-// if (this.direction === "up" && this.currentFloor > user.currentFloor || this.direction === "down" && this.currentFloor < user.currentFloor){
-//     this.queRider(user)
-//   } else if(this.direction === "down")
-//   this.addRider(user)
-// }
-//
-// queRider(user) {
-//   user.currentFloor < user.dropOffFloor
-//     ? this.queRiders.up.push(user)
-//     : this.queRiders.down.push(user)
-// }
-//
-// addRider(user){
-//   user.currentFloor < user.dropOffFloor
-//     ? this.currentRiders.up.push(user)
-//     : this.currentRiders.down.push(user)
-//
-//   this.setDirection()
-//
-//   this.currentFloor = user.currentFloor
-//   this.sortRiders()
-//   this.getLastStop()
-// }
 
 
 class Person {
@@ -174,6 +132,4 @@ class Person {
     this.dropOffFloor = dropOffFloor,
     this.direction = 'up' || 'down'
   }
-
-
 }
