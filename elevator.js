@@ -28,10 +28,16 @@ export default class Elevator {
   /**********************/
 
   riderRequest(user){
-    if (user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
-      this.queRider(user)
-    } else if (user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
-      this.queRider(user)
+    if (this.currentRiders.length) {
+
+        if (user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
+          this.queRider(user)
+        } else if (user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
+          this.queRider(user)
+        } else {
+          this.addRider(user)
+        }
+
     } else {
       this.addRider(user)
     }
@@ -52,18 +58,15 @@ export default class Elevator {
   }
 
   sortRiders(){
-    const direction = this.direction
-    this.currentRiders.sort((a, b) =>{
-      return a.dropOffFloor - b.dropOffFloor
-    })
+    this.currentRiders.sort((a, b) => a.dropOffFloor - b.dropOffFloor)
   }
 
   setDirection(){
-    if (this.currentFloor === this.lastStop) {
-      if (!this.currentRiders.up.length && this.currentRiders.down.length) {
+    if (this.currentFloor === this.lastStop){
+      if(this.direction === "up" && this.queRiders.down.length) {
         this.direction = "down"
-      }
-      if (!this.currentRiders.down.length && this.currentRiders.up.length) {
+        }
+      if (this.currentFloor === this.lastStop && this.direction === "down" && this.queRiders.up.length) {
         this.direction = "up"
       }
     }
@@ -74,8 +77,9 @@ export default class Elevator {
   goToFloor(){
     const direction = this.direction
     // this.getFloors()
-    this.currentFloor = this.currentRiders[direction][0].dropOffFloor
-    this.currentRiders[direction].shift()
+    this.currentFloor = this.currentRiders[0].dropOffFloor
+    this.currentRiders.shift()
+    this.setDirection()
 
   }
 
@@ -103,14 +107,11 @@ export default class Elevator {
   }
 
   getStops(){
-    const { up, down } = this.currentRiders
-    return this.direction === "up"
-      ? this.getStopsReducer(up).sort((a, b) => {
-        return a-b
-      })
-      : this.getStopsReducer(down).sort((a, b) => {
-        return a-b
-      })
+    return this.currentRiders.reduce((stopsArray, user) => {
+      !stopsArray.includes(user.currentFloor) && stopsArray.push(user.currentFloor)
+      !stopsArray.includes(user.dropOffFloor) && stopsArray.push(user.dropOffFloor)
+      return stopsArray
+    },[]).sort((a, b) => a - b)
   }
 
   getStopsReducer(obj){
