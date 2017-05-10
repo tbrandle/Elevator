@@ -126,20 +126,20 @@ describe('Elevator', function() {
     assert.deepEqual(elevator.currentRiders.length, 0);
   })
 
-  it.skip('should be able to keep track of how many total floors', () => {
+  it.only('should be able to keep track of how many total floors', () => {
     const mockUser1 = { name: "Brittany", currentFloor: 3, dropOffFloor: 8 };
     const mockUser2 = { name: "Tim", currentFloor: 5, dropOffFloor: 10 };
     const mockUser3 = { name: "Tim", currentFloor: 5, dropOffFloor: 13 };
     elevator.riderRequest(mockUser1);
     elevator.riderRequest(mockUser2);
     elevator.riderRequest(mockUser3);
-    assert.deepEqual(elevator.getStopsOneDirection(), [3, 5, 8, 10, 13]);
 
     // eval(locus)
     elevator.goToFloor()
     elevator.goToFloor()
     elevator.goToFloor()
 
+    assert.deepEqual(elevator.stops, [ 0, 3, 5, 5, 8, 10, 13 ]);
 
     assert.deepEqual(elevator.floorsTraversed, 13)
 

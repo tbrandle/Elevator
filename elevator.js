@@ -64,7 +64,7 @@ export default class Elevator {
     this.setDirection()
     this.currentFloor = user.currentFloor
     this.getLastStop()
-    this.getAllStops(user)
+    this.getAllStops(user.currentFloor)
   }
 
   setDirection(){
@@ -81,7 +81,6 @@ export default class Elevator {
   }
 
   mapQued(){
-    // this.currentRiders = [...this.queRiders[this.direction]]
     this.queRiders[this.direction].map(user => this.addRider(user))
     this.queRiders[this.direction] = []
   }
@@ -89,26 +88,18 @@ export default class Elevator {
   /**********************/
 
   goToFloor(){
-    const direction = this.direction
-    // this.getFloors()
+    this.getAllStops(this.currentRiders[0].dropOffFloor)
+    console.log("dropOff: ",  this.currentRiders[0].dropOffFloor);
     this.currentFloor = this.currentRiders[0].dropOffFloor
     this.currentRiders.shift()
     this.setDirection()
   }
 
   getFloors(){
-    // this.floorsTraversed = this.currentFloor
-    const stops = this.getStopsOneDirection()
-    const max = Math.max(...stops)
-    const min = Math.min(...stops)
-
-    // console.log("stops", stops);
-    console.log("max - min: ", max - min);
-
-    this.floorsTraversed = Math.abs(min - max)
-    console.log("floorsTraversed: ", this.floorsTraversed);
-
-    // return max - min + this.currentFloor;
+    this.floorsTraversed = this.stops.reduce((sum, stop) => {
+      sum += Math.abs(sum - stop)
+      return sum
+    },0)
   }
 
   /**********************/
@@ -127,9 +118,9 @@ export default class Elevator {
     },[]).sort((a, b) => a - b)
   }
 
-  getAllStops(user){
-    this.stops.push(user.currentFloor, user.dropOffFloor)
-    console.log(this.stops);
+  getAllStops(stop){
+    this.stops.push(stop)
+    this.getFloors()
   }
 }
 
