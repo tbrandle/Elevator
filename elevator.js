@@ -3,10 +3,7 @@ export default class Elevator {
     this.direction = "up" || this.setDirection()
     this.motionStatus = "idle"
     this.currentFloor = 0
-    this.currentRiders= {
-      up:[],
-      down:[]
-    }
+    this.currentRiders= []
     this.queRiders = {
       up:[],
       down:[]
@@ -19,10 +16,7 @@ export default class Elevator {
     this.direction = "up"
     this.motionStatus = 'idle'
     this.currentFloor = 0
-    this.currentRiders= {
-      up:[],
-      down:[]
-    }
+    this.currentRiders= []
     this.queRiders = {
       up:[],
       down:[]
@@ -34,14 +28,11 @@ export default class Elevator {
   /**********************/
 
   riderRequest(user){
-    if (this.direction === "up" && this.currentFloor > user.currentFloor){
-      // console.log("inside up qued request");
+    if (user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
       this.queRider(user)
-    } else if (this.direction === "down" && this.currentFloor < user.currentFloor){
-      // console.log("inside down qued");
+    } else if (user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
       this.queRider(user)
     } else {
-      // console.log("inside addRider");
       this.addRider(user)
     }
   }
@@ -53,12 +44,8 @@ export default class Elevator {
   }
 
   addRider(user){
-    user.currentFloor < user.dropOffFloor
-      ? this.currentRiders.up.push(user)
-      : this.currentRiders.down.push(user)
-
+    this.currentRiders.push(user)
     this.setDirection()
-
     this.currentFloor = user.currentFloor
     this.sortRiders()
     this.getLastStop()
@@ -66,11 +53,8 @@ export default class Elevator {
 
   sortRiders(){
     const direction = this.direction
-    this.currentRiders.up.sort((a, b) =>{
+    this.currentRiders.sort((a, b) =>{
       return a.dropOffFloor - b.dropOffFloor
-    })
-    this.currentRiders.down.sort((a, b) =>{
-      return b.dropOffFloor - a.dropOffFloor
     })
   }
 
