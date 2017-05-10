@@ -30,30 +30,23 @@ export default class Elevator {
   /**********************/
 
   riderRequest(user){
+    const userGoingUp = user.currentFloor < user.dropOffFloor
+    const userGoingDown = user.currentFloor > user.dropOffFloor
+    const elevatorGoingUp = this.direction === "up"
+    const elevatorGoingDown = this.direction === "down"
     if (this.currentRiders.length) {
 
-        if (this.direction === "up" && user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
-          // accounts for scenario where user is going up,
-              // elevator is going up,
-              // but elevator has passed them
+        if (elevatorGoingUp && userGoingUp && this.currentFloor > user.currentFloor){
           this.queRider(user)
-        } else if (this.direction === "up" && user.currentFloor > user.dropOffFloor){
-          // accounts for scenario where user is going down,
-              // elevator is going up,
+        } else if (elevatorGoingUp && userGoingDown){
           this.queRider(user)
-        } else if(this.direction === "down" && user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
-          // accounts for scenario where user is going down,
-              // elevator is going down,
-              // but elevator has passed them
+        } else if(elevatorGoingDown && userGoingDown && this.currentFloor < user.currentFloor){
           this.queRider(user)
-        } else if(this.direction === "down" && user.currentFloor < user.dropOffFloor){
-          // accounts for scenario where user is going up,
-              // elevator is going down,
+        } else if(elevatorGoingDown && userGoingUp){
           this.queRider(user)
         } else {
           this.addRider(user)
         }
-
     } else {
       this.addRider(user)
     }
@@ -138,7 +131,6 @@ export default class Elevator {
       return stopsArray
     },[])
   }
-
 }
 
 
@@ -149,6 +141,4 @@ class Person {
     this.dropOffFloor = dropOffFloor,
     this.direction = 'up' || 'down'
   }
-
-
 }
