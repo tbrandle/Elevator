@@ -72,7 +72,6 @@ describe('Elevator', function() {
     const mockUser = { name: "Brittany", currentFloor: 8, dropOffFloor: 3 };
     elevator.riderRequest(mockUser);
 
-    // eval(locus)
     assert.deepEqual(elevator.currentRiders.length, 1)
     assert.deepEqual(elevator.currentFloor, 8)
 

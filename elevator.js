@@ -3,7 +3,7 @@ export default class Elevator {
     this.direction = "up" || this.setDirection()
     this.motionStatus = "idle"
     this.currentFloor = 0
-    this.currentRiders= []
+    this.currentRiders= [].sort((a, b) => a.dropOffFloor - b.dropOffFloor)
     this.queRiders = {
       up:[],
       down:[]
@@ -16,7 +16,7 @@ export default class Elevator {
     this.direction = "up"
     this.motionStatus = 'idle'
     this.currentFloor = 0
-    this.currentRiders= []
+    this.currentRiders= [].sort((a, b) => a.dropOffFloor - b.dropOffFloor)
     this.queRiders = {
       up:[],
       down:[]
@@ -53,12 +53,7 @@ export default class Elevator {
     this.currentRiders.push(user)
     this.setDirection()
     this.currentFloor = user.currentFloor
-    this.sortRiders()
     this.getLastStop()
-  }
-
-  sortRiders(){
-    this.currentRiders.sort((a, b) => a.dropOffFloor - b.dropOffFloor)
   }
 
   setDirection(){
