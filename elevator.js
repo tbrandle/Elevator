@@ -47,6 +47,7 @@ export default class Elevator {
         } else {
           this.addRider(user)
         }
+
     } else {
       this.addRider(user)
     }
@@ -63,6 +64,7 @@ export default class Elevator {
     this.setDirection()
     this.currentFloor = user.currentFloor
     this.getLastStop()
+    this.getAllStops(user)
   }
 
   setDirection(){
@@ -79,7 +81,8 @@ export default class Elevator {
   }
 
   mapQued(){
-    this.currentRiders = [...this.queRiders[this.direction]]
+    // this.currentRiders = [...this.queRiders[this.direction]]
+    this.queRiders[this.direction].map(user => this.addRider(user))
     this.queRiders[this.direction] = []
   }
 
@@ -95,7 +98,7 @@ export default class Elevator {
 
   getFloors(){
     // this.floorsTraversed = this.currentFloor
-    const stops = this.getStops()
+    const stops = this.getStopsOneDirection()
     const max = Math.max(...stops)
     const min = Math.min(...stops)
 
@@ -112,11 +115,11 @@ export default class Elevator {
 
   getLastStop(){
     this.direction === "up"
-      ? this.lastStop = Math.max(...this.getStops())
-      : this.lastStop = Math.min(...this.getStops())
+      ? this.lastStop = Math.max(...this.getStopsOneDirection())
+      : this.lastStop = Math.min(...this.getStopsOneDirection())
   }
 
-  getStops(){
+  getStopsOneDirection(){
     return this.currentRiders.reduce((stopsArray, user) => {
       !stopsArray.includes(user.currentFloor) && stopsArray.push(user.currentFloor)
       !stopsArray.includes(user.dropOffFloor) && stopsArray.push(user.dropOffFloor)
@@ -124,12 +127,9 @@ export default class Elevator {
     },[]).sort((a, b) => a - b)
   }
 
-  getStopsReducer(obj){
-    return obj.reduce((stopsArray, user) => {
-      !stopsArray.includes(user.currentFloor) && stopsArray.push(user.currentFloor)
-      !stopsArray.includes(user.dropOffFloor) && stopsArray.push(user.dropOffFloor)
-      return stopsArray
-    },[])
+  getAllStops(user){
+    this.stops.push(user.currentFloor, user.dropOffFloor)
+    console.log(this.stops);
   }
 }
 

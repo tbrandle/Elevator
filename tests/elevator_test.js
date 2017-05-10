@@ -86,7 +86,7 @@ describe('Elevator', function() {
     const mockUser2 = { name: "Tim", currentFloor: 4, dropOffFloor: 9 };
     elevator.riderRequest(mockUser1);
     elevator.riderRequest(mockUser2);
-    assert.deepEqual(elevator.getStops(), [3, 4, 8, 9]);
+    assert.deepEqual(elevator.getStopsOneDirection(), [3, 4, 8, 9]);
   })
 
   it('should drop off everyone in the up array, que everyone in down array, then drop of the down array', () =>{
@@ -133,7 +133,7 @@ describe('Elevator', function() {
     elevator.riderRequest(mockUser1);
     elevator.riderRequest(mockUser2);
     elevator.riderRequest(mockUser3);
-    assert.deepEqual(elevator.getStops(), [3, 5, 8, 10, 13]);
+    assert.deepEqual(elevator.getStopsOneDirection(), [3, 5, 8, 10, 13]);
 
     // eval(locus)
     elevator.goToFloor()
