@@ -115,7 +115,7 @@ describe('Elevator', function() {
     elevator.goToFloor()
 
     assert.deepEqual(elevator.direction, "down");
-    assert.deepEqual(elevator.currentRiders.length, 0);
+    assert.deepEqual(elevator.queRiders.down.length, 0);
     assert.deepEqual(elevator.currentRiders.length, 3);
 
     elevator.goToFloor()

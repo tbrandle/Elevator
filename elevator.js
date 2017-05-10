@@ -30,9 +30,14 @@ export default class Elevator {
   riderRequest(user){
     if (this.currentRiders.length) {
 
-        if (user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
+        if (this.direction === "up" && user.currentFloor < user.dropOffFloor && this.currentFloor > user.currentFloor){
+          // accounts for scenario where user is going up,
+              // elevator is going up,
+              // but elevator has passed them
           this.queRider(user)
-        } else if (user.currentFloor > user.dropOffFloor && this.currentFloor < user.currentFloor){
+        } else if (this.direction === "up" && user.currentFloor > user.dropOffFloor){
+          // accounts for scenario where user is going down,
+              // elevator is going up, 
           this.queRider(user)
         } else {
           this.addRider(user)
@@ -60,11 +65,18 @@ export default class Elevator {
     if (this.currentFloor === this.lastStop){
       if(this.direction === "up" && this.queRiders.down.length) {
         this.direction = "down"
+        this.mapQued()
         }
       if (this.currentFloor === this.lastStop && this.direction === "down" && this.queRiders.up.length) {
         this.direction = "up"
+        this.mapQued()
       }
     }
+  }
+
+  mapQued(){
+    this.currentRiders = [...this.queRiders[this.direction]]
+    this.queRiders[this.direction] = []
   }
 
   /**********************/
